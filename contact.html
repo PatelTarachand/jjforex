@@ -602,5 +602,13 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
     <script src="js/script.js"></script>
+    <script>
+        // Google Maps integration
+        function openMap() {
+            const address = "1st Floor, Fahd Complex, Saddani Chowk, Sadar Bazar, Raipur, Chhattisgarh";
+            const encodedAddress = encodeURIComponent(address);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+        }
+    </script>
 </body>
 </html>

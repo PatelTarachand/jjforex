@@ -140,6 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const swapBtn = document.getElementById('swapCurrencies');
     const rateDisplay = document.getElementById('rateDisplay');
 
+    // Only initialize converter if elements exist
+    if (fromAmountInput && toAmountInput && fromCurrencySelect && toCurrencySelect && rateDisplay) {
+        console.log('Currency converter elements found, initializing...');
+
     // Sample exchange rates (in a real application, you would fetch these from an API)
     const exchangeRates = {
         'USD': { 'EUR': 0.85, 'GBP': 0.73, 'INR': 83.12, 'JPY': 149.50, 'AUD': 1.52, 'CAD': 1.36, 'CHF': 0.88 },
@@ -172,9 +176,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const convertedAmount = fromAmount * rate;
         toAmountInput.value = convertedAmount.toFixed(2);
 
+        // Enhanced rate display
+        const changePercent = (Math.random() * 2 - 1).toFixed(2); // Random change for demo
+        const changeClass = changePercent >= 0 ? 'positive' : 'negative';
+        const changeSign = changePercent >= 0 ? '+' : '';
+
         rateDisplay.innerHTML = `
-            <p class="mb-0"><strong>1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}</strong></p>
-            <small class="text-muted">Exchange rate is indicative and may vary</small>
+            <div class="rate-info">
+                <span class="rate-text">1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}</span>
+                <span class="rate-change ${changeClass}">${changeSign}${changePercent}%</span>
+            </div>
+            <small class="rate-disclaimer">
+                <i class="fas fa-info-circle me-1"></i>
+                Rates are indicative and may vary. Contact us for exact rates.
+            </small>
         `;
         rateDisplay.classList.add('active');
     }
@@ -189,15 +204,19 @@ document.addEventListener('DOMContentLoaded', function() {
         convertCurrency();
     }
 
-    // Event listeners for currency converter
-    convertBtn.addEventListener('click', convertCurrency);
-    swapBtn.addEventListener('click', swapCurrencies);
-    fromAmountInput.addEventListener('input', convertCurrency);
-    fromCurrencySelect.addEventListener('change', convertCurrency);
-    toCurrencySelect.addEventListener('change', convertCurrency);
+        // Event listeners for currency converter
+        if (convertBtn) convertBtn.addEventListener('click', convertCurrency);
+        if (swapBtn) swapBtn.addEventListener('click', swapCurrencies);
+        fromAmountInput.addEventListener('input', convertCurrency);
+        fromCurrencySelect.addEventListener('change', convertCurrency);
+        toCurrencySelect.addEventListener('change', convertCurrency);
 
-    // Initial conversion
-    convertCurrency();
+        // Initial conversion
+        convertCurrency();
+        console.log('Currency converter initialized successfully');
+    } else {
+        console.log('Currency converter elements not found on this page');
+    }
 
     // Quick convert cards functionality
     document.querySelectorAll('.quick-convert-card').forEach(card => {
@@ -205,16 +224,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const fromCurrency = this.dataset.from;
             const toCurrency = this.dataset.to;
 
-            if (fromCurrency && toCurrency) {
+            if (fromCurrency && toCurrency && fromCurrencySelect && toCurrencySelect) {
                 fromCurrencySelect.value = fromCurrency;
                 toCurrencySelect.value = toCurrency;
-                convertCurrency();
+                if (typeof convertCurrency === 'function') {
+                    convertCurrency();
+                }
 
-                // Scroll to converter
-                document.getElementById('currency-converter').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+                // Scroll to converter if it exists
+                const converterSection = document.getElementById('currency-converter');
+                if (converterSection) {
+                    converterSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
             }
         });
     });
